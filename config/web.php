@@ -1,6 +1,5 @@
 <?php
 $config = parse_ini_file('hello.ini', true);
-
 $params = require(__DIR__ . '/params.php');
 
 $config = [
@@ -89,7 +88,7 @@ $config = [
                 'settings' => 'app\controllers\SettingsController',
             ],
 
-            'admins' => ['admin']
+            'admins' => ['admin','iboyko','igorostapchuk']
         ],
 
     ],
