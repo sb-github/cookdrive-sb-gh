@@ -44,6 +44,10 @@ use yii\bootstrap\Nav;
             'url' => ['/user/admin/index'],
         ],
         [
+            'label' => 'Сортувати по: ',
+            'url' => ['/user/admin/sort'],
+        ],
+        [
             'label' => Yii::t('user', 'Ролі'),
             'url' => ['/rbac/role/index'],
             'visible' => isset(Yii::$app->extensions['dektrium/yii2-rbac']),
