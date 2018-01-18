@@ -48,7 +48,7 @@ class RolesController extends Controller
         if ($authManager->assign($role, $user->id)) {
             $this->stdout('Done!' . PHP_EOL);
         }else{
-            $this->stdout('Something goes wrong!' . PHP_EOL);
+            $this->stdout('Something go wrong!' . PHP_EOL);
         }
 
     }
