@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
 class RolesController extends Controller
 {
     /**
-     * This function create basic admin and user roles
+     * This function remove all existing roles and create basic admin and user roles
      */
     public function actionCreateBasicRoles()
     {
@@ -32,6 +32,7 @@ class RolesController extends Controller
         $auth->add($admin);
 
         $auth->addChild($admin, $user);
+        $this->stdout('Done!' . PHP_EOL);
     }
 
     /**
