@@ -10,9 +10,25 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\History;
 use app\models\Product;
+use yii\filters\AccessControl;
 
 class AdminController extends BaseAdminController
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionOrders()
     {
         $orders = Order::find()->select('product_id, SUM(quantity) AS quantity_sum, GROUP_CONCAT(DISTINCT user_id) as users_id')->groupBy(['product_id'])->asArray()->where(['date' => date("Y:m:d")])->all();
