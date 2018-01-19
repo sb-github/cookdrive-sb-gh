@@ -47,7 +47,7 @@ AppAsset::register($this);
     } else {
 
         $subitems = [];
-        if(Yii::$app->user->identity->isAdmin)
+        if(Yii::$app->user->can('admin'))
         {
             $subitems[] = [
                 'label' => 'Користувачі',
@@ -75,7 +75,7 @@ AppAsset::register($this);
                 'linkOptions' => ['data-method' => 'post'],
             ];
 
-        } else
+        } elseif (Yii::$app->user->can('user'))
         {
             $subitems[] = [
                 'label' => 'Мій кабінет',

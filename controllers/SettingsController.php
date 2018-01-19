@@ -6,18 +6,26 @@ use app\models\Order;
 use app\models\History;
 use app\models\SkypeBot;
 use Yii;
+use yii\filters\AccessControl;
 
 use dektrium\user\controllers\SettingsController as BaseSettingsController;
 
 class SettingsController extends BaseSettingsController
 {
 
-    public function behaviors() {
-
-        $param = parent::behaviors();
-        $param['access']['rules'][0]['actions'][] = 'orders';
-        $param['access']['rules'][0]['actions'][] = 'balance';
-        return $param;
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['user'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function actionOrders() {

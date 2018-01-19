@@ -25,7 +25,8 @@
         "sunra/php-simple-html-dom-parser": "1.5.2",
         "newerton/yii2-fancybox": "dev-master",
         "yiisoft/yii2-jui": "^2.0",        
-        "bower-asset/jquery": "2.2.*@stable"
+        "bower-asset/jquery": "2.2.*@stable",
+        "dektrium/yii2-rbac": "1.0.0-alpha@dev"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
