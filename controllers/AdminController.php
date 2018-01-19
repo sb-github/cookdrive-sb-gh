@@ -167,18 +167,26 @@ class AdminController extends BaseAdminController
         $query = Order::find()->joinWith('profile');
         $search = new Order();
         if ($search->load(Yii::$app->request->get())) {
-            if (!empty($search->startDate) && !empty($search->endDate)) {
+            if (!empty($search->startDate) && !empty($search->endDate) && !empty($search->name)) {
                 $query = $query->where(['>=', 'date', $search->startDate])
+                    ->andWhere(['<=', 'date', $search->endDate])->andWhere(['like', 'profile.name', $search->name]);
+            }
+            elseif (!empty($search->startDate) && !empty($search->endDate)) {
+                $query = $query->where(['>=', 'date', $search->startDate])
+                    ->andWhere(['<=', 'date', $search->endDate]);
+            } elseif (!empty($search->startDate) && !empty($search->name)) {
+                $query = $query->where(['>=', 'date', $search->startDate])
+                    ->andWhere(['like', 'profile.name', $search->name]);
+            } elseif (!empty($search->endDate) && !empty($search->name)) {
+                $query = $query->where(['like', 'profile.name', $search->name])
                     ->andWhere(['<=', 'date', $search->endDate]);
             } elseif (!empty($search->startDate)) {
                 $query = $query->where(['>=', 'date', $search->startDate]);
             } elseif (!empty($search->endDate)) {
                 $query = $query->where(['<=', 'date', $search->endDate]);
-            }
-            if ($search->name) {
+            } elseif ($search->name) {
                 $query = $query->where(['like', 'profile.name', $search->name]);
             }
-
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
