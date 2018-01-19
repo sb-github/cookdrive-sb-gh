@@ -36,7 +36,7 @@ class AdminController extends BaseAdminController
 
         foreach ($orders as $key => $value) {
             if (($service_id = Product::findOne($value['product_id'])->serv_id) !== null) {
-                $orders_per_service[$service_id][]=$value;
+                $orders_per_service[$service_id][] = $value;
             }
         }
 
@@ -51,22 +51,22 @@ class AdminController extends BaseAdminController
         $date = date("d.m.Y");
         $SITE_NAME = 'http://cookdrive.com.ua';
 
-        foreach ($orders as $key => $value) {            
-            array_push($product, ['id' => Product::findOne($value['product_id'])->product_id, 
-                                  'quantity' => $value['quantity_sum']]);     
+        foreach ($orders as $key => $value) {
+            array_push($product, ['id' => Product::findOne($value['product_id'])->product_id,
+                'quantity' => $value['quantity_sum']]);
         }
         if (!empty($product)) {
 
-        // cookies file (session settings)
+            // cookies file (session settings)
             $cookieFile = "cookies.txt";
-            if(!file_exists($cookieFile)) {
+            if (!file_exists($cookieFile)) {
                 $fh = fopen($cookieFile, "w");
                 fwrite($fh, "");
                 fclose($fh);
             } //
-            
-            foreach ($product as $key => $item) {  
-                $cd_url = $SITE_NAME.'/cart/add/id/'.$item['id'];
+
+            foreach ($product as $key => $item) {
+                $cd_url = $SITE_NAME . '/cart/add/id/' . $item['id'];
 
                 $curl = \curl_init(); // start require
                 curl_setopt($curl, CURLOPT_URL, $cd_url); //URL
@@ -75,86 +75,88 @@ class AdminController extends BaseAdminController
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); //now curl give back response
                 curl_setopt($curl, CURLINFO_HEADER_OUT, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, //data of POST
-                array (
-                    'cnt'=>$item['quantity'],
-                    'double'=>0,
-                    'blank'=>0,
-                    'special'=>0,
-                ));
+                    array(
+                        'cnt' => $item['quantity'],
+                        'double' => 0,
+                        'blank' => 0,
+                        'special' => 0,
+                    ));
                 curl_setopt($curl, CURLOPT_COOKIEFILE, $cookieFile); // Cookie read
                 curl_setopt($curl, CURLOPT_COOKIEJAR, $cookieFile); // Cookie write
 
                 $res = curl_exec($curl);
                 $sent_headers = curl_getinfo($curl, CURLINFO_HEADER_OUT); //get headers
                 //if error -> type error
-                if(!$res) {
-                    $error = curl_error($curl).'('.curl_errno($curl).')';
+                if (!$res) {
+                    $error = curl_error($curl) . '(' . curl_errno($curl) . ')';
                     echo $error;
                 }
                 curl_close($curl);
 
             } // endforeach.  
-            
-            // order form request
-                $cd_url = $SITE_NAME.'/cart/order';
 
-                $curl = \curl_init(); // start require
-                curl_setopt($curl, CURLOPT_URL, $cd_url); //URL
-                curl_setopt($curl, CURLOPT_HEADER, 1); //display headers
-                curl_setopt($curl, CURLOPT_POST, 1); //POST type
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); //now curl give back response
-                curl_setopt($curl, CURLINFO_HEADER_OUT, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, //data of POST
-                array (
-                        'type'=>0,
-                        'phone'=>979471223,
-                        'name'=>'Михайло',
-                        'street'=>'Зарічанська',
-                        'home'=>'5/3',
-                        'code'=>'',
-                        'floor'=>'5',
-                        'apartment'=>'SoftBistro',
-                        'time'=>'1',
-                        'date'=>$date,
-                        'hour'=>'00',
-                        'minute'=>'00',
-                        'comment'=>'Оплата карткою',
-                        'porch'=>'',
+            // order form request
+            $cd_url = $SITE_NAME . '/cart/order';
+
+            $curl = \curl_init(); // start require
+            curl_setopt($curl, CURLOPT_URL, $cd_url); //URL
+            curl_setopt($curl, CURLOPT_HEADER, 1); //display headers
+            curl_setopt($curl, CURLOPT_POST, 1); //POST type
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); //now curl give back response
+            curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, //data of POST
+                array(
+                    'type' => 0,
+                    'phone' => 979471223,
+                    'name' => 'Михайло',
+                    'street' => 'Зарічанська',
+                    'home' => '5/3',
+                    'code' => '',
+                    'floor' => '5',
+                    'apartment' => 'SoftBistro',
+                    'time' => '1',
+                    'date' => $date,
+                    'hour' => '00',
+                    'minute' => '00',
+                    'comment' => 'Оплата карткою',
+                    'porch' => '',
 
                 ));
-                curl_setopt($curl, CURLOPT_COOKIEFILE, $cookieFile); // Cookie read
-                curl_setopt($curl, CURLOPT_COOKIEJAR, $cookieFile); // Cookie write
+            curl_setopt($curl, CURLOPT_COOKIEFILE, $cookieFile); // Cookie read
+            curl_setopt($curl, CURLOPT_COOKIEJAR, $cookieFile); // Cookie write
 
-                $res = curl_exec($curl);
-                $sent_headers = curl_getinfo($curl, CURLINFO_HEADER_OUT); //get headers
-                
-                //if error -> type error
-                if(!$res) {
-                    $error = curl_error($curl).'('.curl_errno($curl).')';
-                    echo $error;
-                }
-                curl_close($curl);
+            $res = curl_exec($curl);
+            $sent_headers = curl_getinfo($curl, CURLINFO_HEADER_OUT); //get headers
+
+            //if error -> type error
+            if (!$res) {
+                $error = curl_error($curl) . '(' . curl_errno($curl) . ')';
+                echo $error;
+            }
+            curl_close($curl);
             // end request
         } //end if
 
         //cut res_link from $res
-        $first = substr($res, strrpos($res, 'Location:')+10);
-        $last = strpos($first, 'Vary')-2;
+        $first = substr($res, strrpos($res, 'Location:') + 10);
+        $last = strpos($first, 'Vary') - 2;
         $cart_link = substr($first, 0, $last); // 
-        
+
         // clear cookie file
         $fh = fopen($cookieFile, "w");
         fwrite($fh, "");
         fclose($fh);
 
-        return $this->redirect($SITE_NAME.$cart_link);
+        return $this->redirect($SITE_NAME . $cart_link);
     }
 
-    public function actionUserBalance() {        
-        $balance_user = History::find()->select('date, users_id, summa, orders_id, operation, id')->groupBy([/*'date', 'operation',  'summa','orders_id', */'id'])->asArray()->all();
+    public function actionUserBalance()
+    {
+        $balance_user = History::find()->select('date, users_id, summa, orders_id, operation, id')->groupBy([/*'date', 'operation',  'summa','orders_id', */
+            'id'])->asArray()->all();
 
         foreach ($balance_user as $key => $value) {
-            $balance_per_user[$value['users_id']][]=$value;
+            $balance_per_user[$value['users_id']][] = $value;
         }
         return $this->render('balanceindex', compact('balance_per_user'));
     }
@@ -167,7 +169,7 @@ class AdminController extends BaseAdminController
         $orders = Order::find()->asArray()->where(['date' => date("Y:m:d")])->all();
         $orders_per_user = [];
         foreach ($orders as $key => $value) {
-            $orders_per_user[$value['user_id']][]=$value;
+            $orders_per_user[$value['user_id']][] = $value;
         }
 
         return $this->render('orderindex', [
@@ -176,11 +178,47 @@ class AdminController extends BaseAdminController
         ]);
     }
 
+    public function actionSort()
+    {
+        $query = Order::find()->joinWith('profile');
+        $search = new Order();
+        if ($search->load(Yii::$app->request->get())) {
+            if (!empty($search->startDate) && !empty($search->endDate) && !empty($search->name)) {
+                $query = $query->where(['>=', 'date', $search->startDate])
+                    ->andWhere(['<=', 'date', $search->endDate])->andWhere(['like', 'profile.name', $search->name]);
+            }
+            elseif (!empty($search->startDate) && !empty($search->endDate)) {
+                $query = $query->where(['>=', 'date', $search->startDate])
+                    ->andWhere(['<=', 'date', $search->endDate]);
+            } elseif (!empty($search->startDate) && !empty($search->name)) {
+                $query = $query->where(['>=', 'date', $search->startDate])
+                    ->andWhere(['like', 'profile.name', $search->name]);
+            } elseif (!empty($search->endDate) && !empty($search->name)) {
+                $query = $query->where(['like', 'profile.name', $search->name])
+                    ->andWhere(['<=', 'date', $search->endDate]);
+            } elseif (!empty($search->startDate)) {
+                $query = $query->where(['>=', 'date', $search->startDate]);
+            } elseif (!empty($search->endDate)) {
+                $query = $query->where(['<=', 'date', $search->endDate]);
+            } elseif ($search->name) {
+                $query = $query->where(['like', 'profile.name', $search->name]);
+            }
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        return $this->render('sort', [
+            'query' => $query->all(),
+            'dataProvider' => $dataProvider,
+            'model' => $search,
+        ]);
+    }
 
     /**
      * Displays a single Order model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionOrderView($id)
     {
@@ -217,42 +255,42 @@ class AdminController extends BaseAdminController
      */
     public function actionOrderUpdate($id, $itemId, $qty)
     {
-        if(Yii::$app->request->isAjax) {
+        if (Yii::$app->request->isAjax) {
             $model = $this->findOrderModel($id);
 
             //if ($model->load(Yii::$app->request->post())) {
             //TODO: model validation can be most inform.
 
-                $history_order = History::find()->where(['orders_id' => $id])->orderBy([
-                    'id' => SORT_DESC   // Отримуємо данні останньої отриманої історії в одному екземплярі
-                ])->asArray()->one();   // по айді замовлення ( в зворотньому порядку HARDCODE: not bug - feature )
+            $history_order = History::find()->where(['orders_id' => $id])->orderBy([
+                'id' => SORT_DESC   // Отримуємо данні останньої отриманої історії в одному екземплярі
+            ])->asArray()->one();   // по айді замовлення ( в зворотньому порядку HARDCODE: not bug - feature )
 
-                $qty = !$qty ? 1 : $qty;
-                $history = new History();           // створюємо новий запис в історії
-                $history->orders_id = $model->id;   //той же id замовлення який буде у новому записі в історії
-                $history->summa = $history_order['summa'] * (-1); // інвертуємо мінусову суму в (+) - поповнення
-                $history->operation = 4;                          // 4 - повернення коштів (заміну товару адміністратором)
-                $history->users_id = $history_order['users_id'];  // той же юзер в новій історії
-                $history->date = date("Y:m:d");     // сьогоднішня дата
-                $history->save();
+            $qty = !$qty ? 1 : $qty;
+            $history = new History();           // створюємо новий запис в історії
+            $history->orders_id = $model->id;   //той же id замовлення який буде у новому записі в історії
+            $history->summa = $history_order['summa'] * (-1); // інвертуємо мінусову суму в (+) - поповнення
+            $history->operation = 4;                          // 4 - повернення коштів (заміну товару адміністратором)
+            $history->users_id = $history_order['users_id'];  // той же юзер в новій історії
+            $history->date = date("Y:m:d");     // сьогоднішня дата
+            $history->save();
 
-                $new_product = Product::find()->where(['id' => $itemId])->asArray()->one();
+            $new_product = Product::find()->where(['id' => $itemId])->asArray()->one();
 
-                $history = new History();
-                $history->orders_id = $model->id;
-                $history->summa = -($new_product['price'] * $qty);
-                $history->operation = 1;  //1 - замовленя, зняття грошей за замовлення
-                $history->users_id = $history_order['users_id'];
-                $history->date = date("Y:m:d");
-                $history->save();
+            $history = new History();
+            $history->orders_id = $model->id;
+            $history->summa = -($new_product['price'] * $qty);
+            $history->operation = 1;  //1 - замовленя, зняття грошей за замовлення
+            $history->users_id = $history_order['users_id'];
+            $history->date = date("Y:m:d");
+            $history->save();
 
-                $model->product_id = $itemId;
-                $model->quantity = $qty;
-                $model->product_name = $new_product['product_name'];
-                $model->product_price = $new_product['price'];
-                $model->product_serv_id = $new_product['serv_id'];
-                $model->date = date("Y:m:d");
-                $model->save();
+            $model->product_id = $itemId;
+            $model->quantity = $qty;
+            $model->product_name = $new_product['product_name'];
+            $model->product_price = $new_product['price'];
+            $model->product_serv_id = $new_product['serv_id'];
+            $model->date = date("Y:m:d");
+            $model->save();
         }
     }
 
@@ -265,7 +303,7 @@ class AdminController extends BaseAdminController
     public function actionOrderDelete($id)
     {
         //History::findAll(['orders_id' => $id])->deleteAll();
-        History::deleteAll("orders_id = " . $id );
+        History::deleteAll("orders_id = " . $id);
         $this->findOrderModel($id)->delete();
 
         return $this->redirect(['user-orders']);
@@ -294,13 +332,13 @@ class AdminController extends BaseAdminController
      */
     public function actionMoney($id, $summ)
     {
-        if(Yii::$app->request->isAjax && $summ !=0) {
+        if (Yii::$app->request->isAjax && $summ != 0) {
             $summ = !$summ ? 0 : $summ;
             $history = new History();
             $history->summa = $summ;
-            if($summ > 0) {
+            if ($summ > 0) {
                 $history->operation = 2; //2 - поповнення балансу адміністратором
-            } elseif($summ < 0) {
+            } elseif ($summ < 0) {
                 $history->operation = 3; //3 - зняття коштів з балансу адміністратором
             }
 
@@ -319,7 +357,7 @@ class AdminController extends BaseAdminController
      */
     public function actionAutocomplate()
     {
-        if(Yii::$app->request->isAjax) {
+        if (Yii::$app->request->isAjax) {
             $term = strip_tags(Yii::$app->request->get('term'));
             $data = Product::find()->select(['concat(sub_category," ",product_name) as value', 'concat("[",sub_category,"] ",product_name) as  label', 'id as id', 'photo_url', 'sub_category', 'price', 'product_name'])
                 ->where(['like', 'product_name', $term])
@@ -337,19 +375,19 @@ class AdminController extends BaseAdminController
     {
         $products = Product::find()
             ->select('id, product_name, photo_url, description')
-            ->where(['category' => NULL]) //undefined category
+            ->where(['category' => NULL])//undefined category
             ->all();
 
         $categories = Product::find()
             ->select('category')
-           ->where(['not', ['category' => NULL]])
-		->distinct()
+            ->where(['not', ['category' => NULL]])
+            ->distinct()
             ->all();
 
         $status = Yii::$app->request->get('status');
 
         return $this->render('undefined-products',
-            compact('products', 'categories','status'));
+            compact('products', 'categories', 'status'));
     }
 
     public function actionAddToCategory()
@@ -357,13 +395,13 @@ class AdminController extends BaseAdminController
         $category = Yii::$app->request->get('category');
         $idProducts = Yii::$app->request->get('products');
 
-        if(!isset($category) || empty($category) || !isset($idProducts))
-            return $this->redirect(['undefined-products','status' => 'error']);
+        if (!isset($category) || empty($category) || !isset($idProducts))
+            return $this->redirect(['undefined-products', 'status' => 'error']);
 
         $condition = "id IN (" . implode(",", $idProducts) . ")";
         Product::updateAll(['category' => $category], $condition);
 
-        return $this->redirect(['undefined-products','status' => 'success']);
+        return $this->redirect(['undefined-products', 'status' => 'success']);
     }
 
 }

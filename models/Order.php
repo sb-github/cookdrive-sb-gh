@@ -13,11 +13,15 @@ use app\models\Service;
 
 class Order extends \yii\db\ActiveRecord
 {
+    public $startDate;
+    public $endDate;
+    public $name;
 
     public function rules()
     {
         return [
-            ['quantity', 'integer', 'min' => 1]
+            ['quantity', 'integer', 'min' => 1],
+            [['startDate', 'endDate', 'name'], 'safe']
         ];
     }
 
@@ -52,7 +56,12 @@ class Order extends \yii\db\ActiveRecord
             'user_id' => 'Користувач/ID користувача',
             'product_id' => 'Продукт/ID продукту',
             'quantity' => 'Кількість',
-            'summ' => 'Всьго'
+            'product_name' => 'Товар',
+            'summ' => 'Всьго',
+            'startDate' => 'Починаючи з: ',
+            'endDate' => 'по дату: ',
+            'name' => 'Ім\'я користувача',
+            'product_price' => 'Ціна'
         ];
     }
 
