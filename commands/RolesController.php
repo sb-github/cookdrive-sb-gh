@@ -20,7 +20,7 @@ class RolesController extends Controller
      */
     public function actionCreateBasicRoles()
     {
-        $auth = \Yii::$app->authManager;
+        $auth = \Yii::$app->getAuthManager();
         $auth->removeAll();
 
         $user = $auth->createRole('user');
