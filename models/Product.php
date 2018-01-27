@@ -9,7 +9,8 @@ use yii\db\ActiveRecord;
 use app\models\Service;
 
 
-class Product extends ActiveRecord{
+class Product extends ActiveRecord
+{
 
     public function getService()
     {

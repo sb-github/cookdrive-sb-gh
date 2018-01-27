@@ -11,9 +11,7 @@ class m171209_221311_add_skype_col extends Migration
 
     public function down()
     {
-        echo "m171209_221311_add_skype_col cannot be reverted.\n";
-
-        return false;
+        $this->dropColumn('profile', 'skype_id');
     }
 
     /*

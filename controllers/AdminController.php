@@ -2,12 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Service;
 use dektrium\user\controllers\AdminController as BaseAdminController;
 use Yii;
 use app\models\Order;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+//use yii\filters\VerbFilter;
 use app\models\History;
 use app\models\Product;
 use yii\filters\AccessControl;
@@ -39,6 +40,7 @@ class AdminController extends BaseAdminController
                 $orders_per_service[$service_id][] = $value;
             }
         }
+
 
         return $this->render('orderindex', ['orders_per_service' => $orders_per_service]);
     }

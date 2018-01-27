@@ -21,13 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?php
-        //TODO: потрібно адміну створювати замовлення ?
-        //echo Html::a('Create Order', ['order-create'], ['class' => 'btn btn-success']);
-        //debug($users);
-        ?>
-    </p>
     <div class="row">
         <div class="col-lg-12">
             <div class="admin_order_wrap">
@@ -92,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php
                                     $summ_all += $product->price * $value['quantity'];
                                  }
-                        } //modified if(isset(product))
+                        }
                         ?>
                             <tfooter>
                                 <tr>
@@ -129,14 +122,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                         $summ_all = 0;
                                         foreach ($values as $key => $value) { ?>
 
-                                        <?php
+                                            <?php
 
-                                            $users_id = explode(',',$value['users_id']);
-                                            $users_name = '';
-                                            foreach ($users_id as $ids) {
-                                                $users_name.=Profile::findOne(intval($ids))->name . ' - ' . Order::find()->select('SUM(quantity) AS quantity')->where(['date' => date("Y:m:d"), 'user_id' => intval($ids), 'product_id' => $value['product_id']])->one()->quantity.  '<br />';
-                                            }
-                                        ?>
+                                                $users_id = explode(',',$value['users_id']);
+                                                $users_name = '';
+                                                foreach ($users_id as $ids) {
+                                                    $users_name .= Profile::findOne(intval($ids))->name . ' - ' . Order::find()->select('SUM(quantity) AS quantity')->where(['date' => date("Y:m:d"), 'user_id' => intval($ids), 'product_id' => $value['product_id']])->one()->quantity.  '<br />';
+                                                }
+                                            ?>
+
                                             <?php $product = Product::findOne($value['product_id']); ?>
                                             <tr>
                                                 <td><a href="<?= $product->link ?>" target="_blank"><?= '[' . $product->category . '|' . $product->sub_category . '] ' . $product->product_name ?></a></td>
@@ -145,14 +139,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 <td><?= $product->price*$value['quantity_sum'] ?> грн.</td>
                                             </tr>
 
-                                            <?php
-                                            $summ_all +=$product->price*$value['quantity_sum'];
-                                        }
-                                        ?>
+                                            <?php $summ_all +=$product->price*$value['quantity_sum']; ?>
+                                        <?php } ?>
                                         <tfooter>
                                             <tr>
-                                                <th colspan="6">Все замовлення сервісу на суму: <?=$summ_all?> грн. <a href="<?= Url::to(['admin/order-cookdrive']) ?>" class="btn btn-success" style="float: right;">Замовити все</a></th>
-
+                                                <th colspan="6">Все замовлення сервісу на суму: <?=$summ_all?> грн.
+                                                    <?php if(Service::findOne($keys)->isCookDrive()) { ?>
+                                                        <a href="<?= Url::to(['admin/order-cookdrive']) ?>" class="btn btn-success" style="float: right;">Автозамовлення на сайті сервісу</a>
+                                                    <?php } ?>
+                                                </th>
                                             </tr>
                                         </tfooter>
                                     </table>

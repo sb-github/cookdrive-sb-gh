@@ -7,13 +7,14 @@
  */
 
 namespace app\controllers;
+
 use dektrium\user\controllers\RegistrationController as BaseRegistrationController;
 use dektrium\user\models\Profile;
 use dektrium\user\models\User;
 use yii\web\NotFoundHttpException;
 
 
-class RegistrationController extends  BaseRegistrationController
+class RegistrationController extends BaseRegistrationController
 {
 
     public function actionConnect($code)
@@ -26,12 +27,12 @@ class RegistrationController extends  BaseRegistrationController
 
         /** @var User $user */
         $user = \Yii::createObject([
-            'class'    => User::className(),
+            'class' => User::className(),
             'scenario' => 'connect',
             'username' => $account->username,
-            'email'    => $account->email,
+            'email' => $account->email,
         ]);
-        
+
         $event = $this->getConnectEvent($account, $user);
 
         $this->trigger(self::EVENT_BEFORE_CONNECT, $event);
@@ -44,12 +45,12 @@ class RegistrationController extends  BaseRegistrationController
             'name' => $account_json['name']['familyName'] . ' ' . $account_json['name']['givenName'],
             'public_email' => $account->email,
             'gravatar_email' => $account->email,
-            'website' => isset($account_json['url'])?$account_json['url']:'',
-            'photo_url' => isset($account_json['image']['url'])?substr($account_json['image']['url'],0, -6):'',
+            'website' => isset($account_json['url']) ? $account_json['url'] : '',
+            'photo_url' => isset($account_json['image']['url']) ? substr($account_json['image']['url'], 0, -6) : '',
         ]);
 
         $user->profile = $profile;
-        
+
         if ($user->load(\Yii::$app->request->post()) && $user->create()) {
 
             $account->connect($user);
@@ -61,7 +62,7 @@ class RegistrationController extends  BaseRegistrationController
         }
 
         return $this->render('connect', [
-            'model'   => $user,
+            'model' => $user,
             'account' => $account,
         ]);
     }
