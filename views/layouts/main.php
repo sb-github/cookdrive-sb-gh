@@ -9,7 +9,6 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use dektrium\user\widgets\Connect;
-use app\models\History;
 
 AppAsset::register($this);
 ?>
@@ -69,12 +68,6 @@ AppAsset::register($this);
                 'url' => ['/user/settings'],
             ];
 
-            $subitems[] = [
-                'label' => 'Вихід',
-                'url' => ['/site/logout'],
-                'linkOptions' => ['data-method' => 'post'],
-            ];
-
         } elseif (Yii::$app->user->can('user'))
         {
             $subitems[] = [
@@ -82,23 +75,32 @@ AppAsset::register($this);
                 'url' => ['/user/settings'],
             ];
 
+        } elseif (!Yii::$app->user->can('user') && !Yii::$app->user->can('user'))
+        {
             $subitems[] = [
-                'label' => 'Вихід',
-                'url' => ['/site/logout'],
-                'linkOptions' => ['data-method' => 'post'],
+                'label' => 'Зверніться до адміністратора сайту, щоб отримати повні права користувача',
             ];
-
         }
 
-        $menuItems[] = ['label' => Yii::$app->user->identity->profile->name,
+        $menuItems[] = [
+            'label' => Yii::$app->user->identity->profile->name,
             'items' => $subitems,
         ];
 
+        $menuItems[] = [
+            'label' => 'Вихід <span style="color: darkgray;" class="glyphicon glyphicon-log-out"></span>',
+            'url' => ['/site/logout'],
+            'linkOptions' => ['data-method' => 'post'],
+        ];
+
     }
+
     echo Nav::widget([
+        'encodeLabels' => false,
         'options' => ['class' =>'navbar-nav navbar-right'],
         'items' => $menuItems,
     ]);
+
     NavBar::end();
 
     ?>
@@ -126,6 +128,7 @@ AppAsset::register($this);
 </div>
 
 <a href="#" id="up_page"></a>
+<div class="random-gif-loading"></div>
 
 <footer class="footer">
     <div class="container">
@@ -134,7 +137,6 @@ AppAsset::register($this);
         <p class="pull-right"><?= date("d.m.Y") . 'р.' ?></p>
     </div>
 </footer>
-
 <?php $this->endBody() ?>
 </body>
 </html>

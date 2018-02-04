@@ -1,25 +1,29 @@
 <?php
+
 namespace app\models;
 
 use dektrium\user\models\User as BaseProfile;
+
 class User extends BaseProfile
 {
-	public function sendOrderMail($order) 
-	{
-	    $sum = 0;
-		foreach($order as $key => $dish)
-		    {
-		      	$msg .= $dish['product_name'].' | ';
-		    	$msg .= $dish['quantity'].' шт. |';
-		    	$msg .= $dish['sum'].' грн.|<br>';
-				$sum += $dish['sum'];
-			}
-		$msg .= 'Всего: '.$sum.'грн.';
+    public function sendOrderMail($order)
+    {
+        $sum = 0;
+        $msg = '';
 
-		$this->sendMail('order', 'Ваш заказ принят.', ['Orders' => $msg, 'OrderDate' => date("Y:m:d")]);
-	}
+        foreach ($order as $key => $dish) {
+            $msg .= $dish['product_name'] . ' | ';
+            $msg .= $dish['quantity'] . ' шт. |';
+            $msg .= $dish['sum'] . ' грн.|<br>';
+            $sum += $dish['sum'];
+        }
+        $msg .= 'Всего: ' . $sum . 'грн.';
 
-    public function sendMail($view, $subject, $params = []) {
+        $this->sendMail('order', 'Ваш заказ принят.', ['Orders' => $msg, 'OrderDate' => date("Y:m:d")]);
+    }
+
+    public function sendMail($view, $subject, $params = [])
+    {
         // Set layout params
         \Yii::$app->mailer->getView()->params['userName'] = $this->username;
 

@@ -25,4 +25,12 @@ class Service extends ActiveRecord
 
         ];
     }
+
+    public function isCookDrive() {
+        if( $this->id == 1 || $this->name == 'CookDrive' || $this->link == 'http://cookdrive.com.ua' ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

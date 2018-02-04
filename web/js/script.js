@@ -194,11 +194,79 @@ function confirm_order() {
             }
         });
 
-        if (arr_error.length == 0) {
+        if (arr_error.length === 0) {
             $.ajax({
                 url: '/cart/confirm',
                 type: 'POST',
+                beforeSend : function () {
+
+                    // blur background
+                    $('.wrap').addClass('blur-filter');
+
+                    // Initiate gifLoop for set interval
+                    var refresh;
+                    // Duration count in seconds
+                    var duration = 1000 * 3;
+                    // Giphy API defaults
+                    var giphy = {
+                        baseURL: "https://api.giphy.com/v1/gifs/",
+                        key: "dc6zaTOxFJmzC",
+                        tag: "wait",
+                        type: "random",
+                        rating: "pg-13"
+                    };
+                    // Target gif-wrap container
+                    var $gif_wrap = $(".random-gif-loading");
+                    // Giphy API URL
+                    var giphyURL = encodeURI(
+                        giphy.baseURL +
+                        giphy.type +
+                        "?api_key=" +
+                        giphy.key +
+                        "&tag=" +
+                        giphy.tag +
+                        "&rating=" +
+                        giphy.rating
+                    );
+
+                    $gif_wrap.fadeIn();
+
+                    // Call Giphy API and render data
+                    var newGif = function () {
+                      return $.getJSON(giphyURL, function(json) {
+                          return renderGif(json.data);
+                      });
+                    };
+
+                    // Display Gif in gif wrap container
+                    var renderGif = function(_giphy) {
+                        // Set gif as bg image
+                        $gif_wrap.css({
+                            "background-image": 'url("' + _giphy.image_original_url + '")'
+                        });
+
+                        // Start duration countdown
+                        refreshRate();
+                    };
+
+                    // Call for new gif after duration
+                    var refreshRate = function() {
+                        // Reset set intervals
+                        clearInterval(refresh);
+                        refresh = setInterval(function() {
+                            // Call Giphy API for new gif
+                            newGif();
+                        }, duration);
+                    };
+
+                    // Call Giphy API for new gif
+                    newGif();
+                },
                 success: function (res) {
+                    $('.random-gif-loading').fadeOut();
+                    $('.wrap').removeClass('blur-filter');
+
+
                     if (res) {
                         res = JSON.parse(res);
                         if (res['balance']) {

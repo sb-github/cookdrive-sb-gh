@@ -111,6 +111,7 @@ $this->title = 'Корзина';
     </div>
     <?php endif; ?>
 
+
 <?php yii\bootstrap\Modal::begin(['id'=>'authModal','header' => '<h3>Авторизація</h3>', 'size' => 'modal-sm']); ?>
 <?= Connect::widget([ 'baseAuthUrl' => ['/user/security/auth']]) ?>
 <?php yii\bootstrap\Modal::end();?>

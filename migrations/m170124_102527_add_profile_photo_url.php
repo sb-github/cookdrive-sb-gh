@@ -11,9 +11,7 @@ class m170124_102527_add_profile_photo_url extends Migration
 
     public function down()
     {
-        echo "m170124_102527_add_profile_photo_url cannot be reverted.\n";
-
-        return false;
+        $this->dropColumn('profile', 'photo_url');
     }
 
     /*

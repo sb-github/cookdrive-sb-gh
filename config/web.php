@@ -1,5 +1,4 @@
 <?php
-$config = parse_ini_file('hello.ini', true);
 $params = require(__DIR__ . '/params.php');
 
 $config = [
@@ -7,7 +6,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'defaultRoute' => 'service/index',
-    'language'=>'en', // back to English
+    'language'=>'en',
     'components' => [
         'view' => [
             'theme' => [
@@ -21,8 +20,8 @@ $config = [
             'clients' => [
                 'google' => [
                     'class'        => 'dektrium\user\clients\Google',
-                    'clientId'     => $config['oauth_google_clientId'],
-                    'clientSecret' => $config['oauth_google_clientSecret'],
+                    'clientId'     => getenv('OAUTH_GOOGLE_AUTH_CLIENT_ID'),
+                    'clientSecret' => getenv('OAUTH_GOOGLE_AUTH_CLIENT_SECRET'),
                 ],
             ],
         ],
@@ -35,9 +34,8 @@ $config = [
             ],
         ],
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'c3KxaQtedXAsvrUkULoiSDJ2gYPnidXf',
-           // 'baseUrl' => '',
+            // !!! insert a secret key in the .env file (if it is empty) - this is required by cookie validation
+            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY'),
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -46,23 +44,25 @@ $config = [
             'errorAction' => 'site/error',
         ],
         'mailer' => [
-        'class' => 'yii\swiftmailer\Mailer',
-        'viewPath' => '@app/mail',
-        'htmlLayout' => '@app/mail/layouts/main-html',
-        'textLayout' => '@app/mail/layouts/main-text',
-        'messageConfig' => [
-            'charset' => 'UTF-8',
-            'from' => ['food.softbistro@gmail.com' => 'SoftBistro'],
-        ],
-        'useFileTransport' => false,
-        'transport' => [
-            'class' => 'Swift_SmtpTransport',
-            'host' => 'smtp.gmail.com',
-            'username' => 'food.softbistro@gmail.com',
-            'password' => '159951Azq',
-            'port' => '465',
-            'encryption' => 'ssl',
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@app/mail',
+            'htmlLayout' => '@app/mail/layouts/main-html',
+            'textLayout' => '@app/mail/layouts/main-text',
+            'messageConfig' => [
+                'charset' => 'UTF-8',
+                'from' => [
+                    getenv('EMAIL_FROM_EMAIL') => getenv('EMAIL_FROM_NAME')
+                ],
             ],
+            'useFileTransport' => false,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => getenv('EMAIL_SMTP_HOST'),
+                'username' => getenv('EMAIL_SMTP_USERNAME'),
+                'password' => getenv('EMAIL_SMTP_PASSWORD'),
+                'port' => getenv('EMAIL_SMTP_PORT'),
+                'encryption' => getenv('EMAIL_SMTP_ENCRYPTION'),
+                ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -95,8 +95,6 @@ $config = [
                 'admin' => 'app\controllers\AdminController',
                 'settings' => 'app\controllers\SettingsController',
             ],
-
-            'admins' => ['admin', 'iboyko', 'igorostapchuk']
         ],
 
     ],
